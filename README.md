@@ -51,6 +51,8 @@ Easiest way: GitHub Pages.
 
 Or just upload `index.html` to any static host — Netlify, Vercel, Cloudflare Pages, your own S3 bucket. No build required.
 
+A live deployment is hosted on Vercel.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
