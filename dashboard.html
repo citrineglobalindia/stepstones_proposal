@@ -130,23 +130,57 @@
 
   /* ===== Proposals table ===== */
   .data-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-  .row{display:grid;grid-template-columns:1.4fr 1.2fr 1fr 120px 110px 80px;gap:14px;align-items:center;padding:14px 22px;border-bottom:1px solid var(--line-soft);transition:background .12s}
+  .row{
+    display:grid;
+    grid-template-columns:
+      minmax(0, 2fr)    /* title       */
+      minmax(0, 1.4fr)  /* client      */
+      minmax(0, 1.2fr)  /* owner       */
+      110px             /* status      */
+      90px              /* updated     */
+      48px;             /* actions     */
+    gap:18px;
+    align-items:center;
+    padding:14px 22px;
+    border-bottom:1px solid var(--line-soft);
+    transition:background .12s;
+    min-height:64px;
+  }
   .row:last-child{border-bottom:0}
-  .row.head{background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:71px;z-index:5}
-  .row.head .cell{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;opacity:.55;font-weight:600;cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:5px}
+  .row.head{background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:71px;z-index:5;min-height:42px;padding-top:11px;padding-bottom:11px}
+  .row.head .cell{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;opacity:.55;font-weight:600;cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .row.head .cell.updated{justify-content:flex-end;text-align:right;display:flex}
   .row.head .cell:hover{opacity:.85;color:var(--gold)}
   .row.head .cell .sort-arrow{opacity:0;transition:opacity .15s}
   .row.head .cell.sorted .sort-arrow{opacity:1}
   .row.data{cursor:pointer}
   .row.data:hover{background:var(--surface-2)}
-  .row.data.selected{background:linear-gradient(90deg,rgba(244,196,48,.05),transparent);border-left:3px solid var(--gold);padding-left:19px}
-  .cell .ttl{font-weight:600;font-size:14px;line-height:1.3;color:var(--text);display:flex;align-items:center;gap:6px}
-  .cell .pno{font-family:'DM Mono',monospace;font-size:11px;opacity:.5;background:var(--surface-2);padding:2px 7px;border-radius:4px;font-weight:500}
-  .cell .meta{font-size:11.5px;opacity:.55;margin-top:3px}
-  .cell .money{font-family:'DM Mono',monospace;font-size:14px;font-weight:500}
-  .cell .owner-pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px}
-  .cell .owner-pill .av{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#3a3a40,#1c1c20);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--mute);border:1px solid var(--line)}
-  .row.empty{padding:60px 30px;justify-content:center;text-align:center;color:var(--mute);grid-template-columns:1fr}
+  .row.data.selected{background:linear-gradient(90deg,rgba(244,196,48,.05),transparent);box-shadow:inset 3px 0 0 var(--gold)}
+
+  /* Cell layout: every cell is a single-line title + optional muted sub */
+  .cell{min-width:0}
+  .cell .ttl{
+    font-weight:600;font-size:13.5px;line-height:1.3;color:var(--text);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .cell .meta{
+    font-size:11.5px;opacity:.55;margin-top:3px;line-height:1.3;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    display:flex;align-items:center;gap:8px;flex-wrap:nowrap;
+  }
+  .cell .meta > *{flex-shrink:0;min-width:0}
+  .cell .meta .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex-shrink:1}
+  .cell .pno{font-family:'DM Mono',monospace;font-size:10.5px;opacity:.7;background:var(--surface-2);padding:2px 7px;border-radius:4px;font-weight:500;letter-spacing:.02em;border:1px solid var(--line-soft);flex-shrink:0}
+  .cell .money{font-family:'DM Mono',monospace;font-size:12.5px;opacity:.85;flex-shrink:0}
+  .cell .dot-sep{opacity:.3;flex-shrink:0}
+
+  .cell.owner .owner-pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;min-width:0;width:100%}
+  .cell.owner .owner-pill .av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#3a3a40,#1c1c20);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--mute);border:1px solid var(--line);flex-shrink:0}
+  .cell.owner .owner-pill .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+
+  .cell.updated{text-align:right;font-size:12px;opacity:.65;font-variant-numeric:tabular-nums;font-feature-settings:'tnum'}
+
+  .row.empty{padding:60px 30px;justify-content:center;text-align:center;color:var(--mute);grid-template-columns:1fr;min-height:0}
   .row.empty .big{font-family:'Fraunces',serif;font-size:24px;font-weight:500;color:var(--text);margin-bottom:8px;letter-spacing:-.01em}
   .row.empty svg{width:64px;height:64px;opacity:.25;margin-bottom:12px}
 
@@ -180,11 +214,11 @@
   .row-menu button.danger svg{color:#ff8585}
 
   @media (max-width:900px){
-    .row{grid-template-columns:1fr 100px 50px;gap:8px;padding:14px 16px}
+    .row{grid-template-columns:minmax(0,1fr) 96px 36px;gap:10px;padding:14px 16px}
     .row.head{display:none}
-    .cell.client,.cell.owner,.cell.updated{display:none}
-    .cell.title .meta-mobile{display:block !important;font-size:11px;opacity:.55;margin-top:5px}
-    .cell.title .meta-mobile span{margin-right:10px}
+    .cell.client,.cell.owner{display:none}
+    .cell.updated{display:none}
+    .cell.title .meta-mobile{display:inline-flex !important}
   }
 
   /* ===== Right Activity Panel ===== */
@@ -660,28 +694,31 @@ function renderProposals(){
 
   list.innerHTML = filtered.map(p => {
     const ownerInit = initials(p.owner_name, p.owner_email);
+    const ownerName = p.owner_name || p.owner_email?.split('@')[0] || '—';
     const titleLabel = p.title || (p.client_company ? `Proposal for ${p.client_company}` : 'Untitled Proposal');
     const isSel = p.id === SELECTED_ID;
+    const clientLabel = p.client_company || p.client_name || '—';
     return `<div class="row data ${isSel?'selected':''}" data-id="${p.id}">
       <div class="cell title">
-        <div class="ttl">${esc(titleLabel)} ${p.pno ? `<span class="pno">${esc(p.pno)}</span>` : ''}</div>
-        <div class="meta">${fmtMoney(p.currency, p.total)}</div>
-        <div class="meta-mobile" style="display:none">
-          <span>${esc(p.client_company || p.client_name || '—')}</span>
-          <span>${fmtDate(p.updated_at)}</span>
+        <div class="ttl" title="${esc(titleLabel)}">${esc(titleLabel)}</div>
+        <div class="meta">
+          ${p.pno ? `<span class="pno">${esc(p.pno)}</span>` : ''}
+          <span class="money">${fmtMoney(p.currency, p.total)}</span>
+          <span class="meta-mobile" style="display:none">
+            <span class="dot-sep">·</span>
+            <span class="truncate">${esc(clientLabel)}</span>
+          </span>
         </div>
       </div>
       <div class="cell client">
-        <div class="ttl">${esc(p.client_company || p.client_name || '—')}</div>
-        <div class="meta">${esc(p.client_email || '')}</div>
+        <div class="ttl" title="${esc(clientLabel)}">${esc(clientLabel)}</div>
+        ${p.client_email ? `<div class="meta"><span class="truncate" title="${esc(p.client_email)}">${esc(p.client_email)}</span></div>` : ''}
       </div>
       <div class="cell owner">
-        <div class="owner-pill"><div class="av">${ownerInit}</div><span>${esc(p.owner_name || p.owner_email?.split('@')[0] || '—')}</span></div>
+        <div class="owner-pill" title="${esc(ownerName)}"><div class="av">${ownerInit}</div><span class="nm">${esc(ownerName)}</span></div>
       </div>
-      <div class="cell"><span class="status ${p.status}"><span class="dot"></span>${p.status}</span></div>
-      <div class="cell updated">
-        <div class="meta">${fmtDate(p.updated_at)}</div>
-      </div>
+      <div class="cell status-cell"><span class="status ${p.status}"><span class="dot"></span>${p.status}</span></div>
+      <div class="cell updated" title="${fmtDateFull(p.updated_at)}">${fmtDate(p.updated_at)}</div>
       <div class="cell row-actions" onclick="event.stopPropagation()">
         <button class="row-menu-btn" onclick="toggleMenu('${p.id}', event)" title="Actions">
           <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
