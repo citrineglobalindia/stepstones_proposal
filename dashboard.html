@@ -128,67 +128,60 @@
   .sort-select{padding:8px 30px 8px 12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rsm);color:var(--text);font-size:12.5px;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff88' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:14px}
   .sort-select:focus{outline:none;border-color:var(--gold)}
 
-  /* ===== Proposals table ===== */
+  /* ===== Proposals table (native HTML table — bulletproof) ===== */
   .data-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-  .row{
-    display:grid;
-    grid-template-columns:
-      120px              /* id          */
-      minmax(0, 2fr)     /* title       */
-      minmax(0, 1.4fr)   /* client      */
-      minmax(0, 130px)   /* type        */
-      100px              /* status      */
-      110px              /* value       */
-      90px               /* date        */
-      40px;              /* actions     */
-    gap:14px;
-    align-items:center;
-    padding:14px 20px;
+  .tbl-scroll{overflow-x:auto}
+  table.proposals{width:100%;min-width:880px;border-collapse:separate;border-spacing:0;table-layout:fixed}
+  table.proposals th, table.proposals td{
+    padding:14px 12px;
+    text-align:left;vertical-align:middle;
     border-bottom:1px solid var(--line-soft);
-    transition:background .12s;
-    min-height:64px;
+    overflow:hidden;
   }
-  .row:last-child{border-bottom:0}
-  .row.head{background:var(--surface-2);border-bottom:1px solid var(--line);min-height:44px;padding-top:12px;padding-bottom:12px}
-  .row.head .cell{font-size:10px;text-transform:uppercase;letter-spacing:.13em;opacity:.55;font-weight:700;user-select:none;display:flex;align-items:center;gap:5px;white-space:nowrap;cursor:default}
-  .row.head .cell[data-sort]{cursor:pointer}
-  .row.head .cell[data-sort]:hover{opacity:.9;color:var(--gold)}
-  .row.head .cell.right{justify-content:flex-end;text-align:right}
-  .row.head .cell .sort-arrow{opacity:0;transition:opacity .15s}
-  .row.head .cell.sorted .sort-arrow{opacity:1}
-  .row.data{cursor:pointer}
-  .row.data:hover{background:var(--surface-2)}
-  .row.data.selected{background:linear-gradient(90deg,rgba(244,196,48,.05),transparent);box-shadow:inset 3px 0 0 var(--gold)}
+  table.proposals th{
+    background:var(--surface-2);
+    font-size:10px;text-transform:uppercase;letter-spacing:.14em;opacity:.6;font-weight:700;
+    color:var(--mute);user-select:none;
+    border-bottom:1px solid var(--line);
+    white-space:nowrap;
+    height:42px;padding-top:10px;padding-bottom:10px;
+  }
+  table.proposals th[data-sort]{cursor:pointer}
+  table.proposals th[data-sort]:hover{color:var(--gold)}
+  table.proposals th .sort-arrow{opacity:0;transition:opacity .15s;margin-left:4px}
+  table.proposals th.sorted .sort-arrow{opacity:1}
+  table.proposals tbody tr{transition:background .12s}
+  table.proposals tbody tr:hover{background:var(--surface-2);cursor:pointer}
+  table.proposals tbody tr.selected{background:linear-gradient(90deg,rgba(244,196,48,.06),transparent);box-shadow:inset 3px 0 0 var(--gold)}
+  table.proposals tbody tr:last-child td{border-bottom:0}
 
-  /* Cell layout: every cell is a single-line title + optional muted sub */
-  .cell{min-width:0;display:flex;flex-direction:column;justify-content:center}
-  .cell.center{justify-content:center;align-items:flex-start}
-  .cell.right{align-items:flex-end;text-align:right}
+  /* Column widths */
+  table.proposals col.c-id{width:112px}
+  table.proposals col.c-title{width:auto}
+  table.proposals col.c-client{width:200px}
+  table.proposals col.c-type{width:140px}
+  table.proposals col.c-status{width:108px}
+  table.proposals col.c-value{width:108px}
+  table.proposals col.c-date{width:92px}
+  table.proposals col.c-actions{width:120px}
 
-  .cell .ttl{
-    font-weight:600;font-size:13.5px;line-height:1.3;color:var(--text);
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    max-width:100%;
-  }
-  .cell .sub{
-    font-size:11px;opacity:.5;margin-top:3px;line-height:1.3;
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    max-width:100%;
-  }
+  /* Cell content helpers */
+  table.proposals .ttl{font-weight:600;font-size:13.5px;line-height:1.3;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  table.proposals .sub{font-size:11px;opacity:.5;margin-top:3px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  table.proposals td.right, table.proposals th.right{text-align:right}
 
   /* ID column */
-  .cell.id .pno{font-family:'DM Mono',monospace;font-size:11.5px;opacity:.85;font-weight:500;letter-spacing:.02em;color:var(--gold)}
-  .cell.id .sub{font-family:'DM Mono',monospace;font-size:10.5px}
+  table.proposals .pno{font-family:'DM Mono',monospace;font-size:11.5px;font-weight:500;letter-spacing:.02em;color:var(--gold);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-  /* Money */
-  .cell.value{align-items:flex-end;text-align:right;font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
-  .cell.value .v{font-family:'DM Mono',monospace;font-size:13.5px;font-weight:500;color:var(--text)}
-  .cell.value .c{font-size:10px;opacity:.45;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:2px}
+  /* Value column */
+  table.proposals td.col-value{font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+  table.proposals .money-v{font-family:'DM Mono',monospace;font-size:13.5px;font-weight:500;color:var(--text)}
+  table.proposals .money-c{font-size:10px;opacity:.42;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:2px}
 
-  /* Date */
-  .cell.date{text-align:right;align-items:flex-end;font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
-  .cell.date .d{font-size:12.5px;opacity:.85}
-  .cell.date .ds{font-size:10.5px;opacity:.4;margin-top:2px}
+  /* Date column */
+  table.proposals td.col-date{font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+  table.proposals .date-d{font-size:12.5px;opacity:.85;line-height:1.2}
+  table.proposals .date-s{font-size:10.5px;opacity:.4;margin-top:2px}
 
   /* Type / category badge */
   .type-badge{
@@ -208,18 +201,39 @@
   .type-badge.mobile{background:rgba(94,212,205,.1);color:#8be3dd;border-color:rgba(94,212,205,.25)}
   .type-badge.custom{background:rgba(255,160,90,.1);color:#ffc191;border-color:rgba(255,160,90,.25)}
 
-  /* Inline WA button */
+  /* Actions cell — visible WA + menu in same cell */
+  table.proposals td.col-actions{padding-right:14px}
+  table.proposals .actions-wrap{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end;width:100%}
   .wa-btn{
-    background:rgba(37,211,102,.12);color:#42d77f;border:1px solid rgba(37,211,102,.25);
-    width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
-    cursor:pointer;transition:all .15s;flex-shrink:0;padding:0;
+    background:#25d366;color:#fff;border:0;
+    height:30px;padding:0 11px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    cursor:pointer;transition:all .15s;font-size:11.5px;font-weight:700;letter-spacing:.02em;
+    font-family:inherit;
   }
-  .wa-btn:hover{background:rgba(37,211,102,.2);border-color:rgba(37,211,102,.45);transform:scale(1.05)}
-  .wa-btn svg{width:13px;height:13px}
+  .wa-btn:hover{background:#1fb558;transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,211,102,.35)}
+  .wa-btn:disabled{background:#2a2a30;color:var(--mute-2);cursor:not-allowed;transform:none;box-shadow:none}
+  .wa-btn svg{width:14px;height:14px;flex-shrink:0}
+  .wa-btn.icon-only{padding:0;width:30px}
+  .menu-btn{
+    background:transparent;border:1px solid var(--line);color:var(--mute);
+    width:30px;height:30px;border-radius:8px;
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    font-size:0;flex-shrink:0;
+  }
+  .menu-btn:hover{background:var(--surface-3);color:var(--text);border-color:#3a3a40}
+  .menu-wrap{position:relative;display:inline-block}
+  .row-menu{position:absolute;right:0;top:calc(100% + 4px);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rsm);min-width:200px;padding:6px;z-index:60;display:none;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+  .row-menu.show{display:block;animation:menuIn .12s ease-out}
+  .row-menu button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:transparent;border:0;color:var(--text);padding:8px 11px;font-size:13px;border-radius:6px;cursor:pointer;font-family:inherit}
+  .row-menu button:hover{background:var(--line)}
+  .row-menu button svg{width:14px;height:14px;opacity:.6;flex-shrink:0}
+  .row-menu .div{height:1px;background:var(--line-soft);margin:4px 0}
+  .row-menu button.danger{color:#ff8585}
 
-  .row.empty{padding:60px 30px;justify-content:center;text-align:center;color:var(--mute);grid-template-columns:1fr;min-height:0;display:block}
-  .row.empty .big{font-family:'Fraunces',serif;font-size:24px;font-weight:500;color:var(--text);margin-bottom:8px;letter-spacing:-.01em}
-  .row.empty svg{width:64px;height:64px;opacity:.25;margin-bottom:12px}
+  .tbl-empty{padding:60px 30px;text-align:center;color:var(--mute)}
+  .tbl-empty .big{font-family:'Fraunces',serif;font-size:24px;font-weight:500;color:var(--text);margin-bottom:8px;letter-spacing:-.01em}
+  .tbl-empty svg{width:64px;height:64px;opacity:.25;margin-bottom:12px}
 
   /* ===== Status badges ===== */
   .status{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;padding:4px 9px 4px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em}
@@ -250,28 +264,20 @@
   .row-menu button.danger{color:#ff8585}
   .row-menu button.danger svg{color:#ff8585}
 
+  /* Table-specific responsive: hide less-essential columns on narrower
+     screens. Below 900px the table itself becomes horizontally scrollable
+     (via .tbl-scroll) so even narrow phones can read every column. */
   @media (max-width:1180px){
-    .row{
-      grid-template-columns:
-        90px              /* id          */
-        minmax(0, 1.6fr)  /* title       */
-        minmax(0, 1.2fr)  /* client      */
-        100px             /* status      */
-        80px              /* date        */
-        36px;             /* actions     */
-      gap:12px;padding:14px 16px;
-    }
-    .cell.type, .cell.value{display:none}
+    table.proposals col.c-type{width:0}
+    table.proposals th.col-type, table.proposals td.col-type{display:none}
   }
-  @media (max-width:760px){
-    .row{
-      grid-template-columns:minmax(0,1fr) 90px 32px;
-      gap:10px;padding:13px 14px;
-    }
-    .row.head{display:none}
-    .cell.id, .cell.client, .cell.date{display:none}
-    .cell.title .sub-mobile{display:flex !important;gap:8px;font-size:11px;opacity:.55;margin-top:5px;align-items:center}
-    .cell.title .sub-mobile .dot-sep{opacity:.3}
+  @media (max-width:900px){
+    table.proposals col.c-value{width:0}
+    table.proposals col.c-date{width:0}
+    table.proposals th.col-value, table.proposals td.col-value,
+    table.proposals th.col-date,  table.proposals td.col-date{display:none}
+    .wa-btn .wa-label{display:none}
+    .wa-btn{padding:0;width:30px}
   }
 
   /* ===== Right Activity Panel ===== */
@@ -467,21 +473,37 @@
         </select>
       </div>
 
-      <div class="data-card" id="propWrap">
-        <div class="row head">
-          <div class="cell id" data-sort="pno">ID <span class="sort-arrow">↓</span></div>
-          <div class="cell" data-sort="title">Proposal <span class="sort-arrow">↓</span></div>
-          <div class="cell client">Client</div>
-          <div class="cell type">Type</div>
-          <div class="cell">Status</div>
-          <div class="cell value right" data-sort="total">Value <span class="sort-arrow">↓</span></div>
-          <div class="cell date right" data-sort="updated_at">Date <span class="sort-arrow">↓</span></div>
-          <div class="cell"></div>
-        </div>
-        <div id="propList">
-          <div class="skeleton"></div>
-          <div class="skeleton" style="opacity:.7"></div>
-          <div class="skeleton" style="opacity:.4"></div>
+      <div class="data-card">
+        <div class="tbl-scroll">
+          <table class="proposals">
+            <colgroup>
+              <col class="c-id">
+              <col class="c-title">
+              <col class="c-client">
+              <col class="c-type">
+              <col class="c-status">
+              <col class="c-value">
+              <col class="c-date">
+              <col class="c-actions">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="col-id" data-sort="pno">ID<span class="sort-arrow">↓</span></th>
+                <th class="col-title" data-sort="title">Proposal<span class="sort-arrow">↓</span></th>
+                <th class="col-client">Client</th>
+                <th class="col-type">Type</th>
+                <th class="col-status">Status</th>
+                <th class="col-value right" data-sort="total">Value<span class="sort-arrow">↓</span></th>
+                <th class="col-date right" data-sort="updated_at">Date<span class="sort-arrow">↓</span></th>
+                <th class="col-actions right">Send</th>
+              </tr>
+            </thead>
+            <tbody id="propList">
+              <tr><td colspan="8" style="padding:0"><div class="skeleton"></div></td></tr>
+              <tr><td colspan="8" style="padding:0"><div class="skeleton" style="opacity:.7"></div></td></tr>
+              <tr><td colspan="8" style="padding:0"><div class="skeleton" style="opacity:.4"></div></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -782,18 +804,19 @@ function renderProposals(){
   });
   filtered = applySort(filtered);
 
-  const list = $('#propList');
+  const tbody = $('#propList');
   if (!filtered.length) {
-    list.innerHTML = `<div class="row empty"><div>
+    tbody.innerHTML = `<tr><td colspan="8" class="tbl-empty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       <div class="big">${PROPOSALS.length ? 'No matches.' : 'No proposals yet.'}</div>
       <div>${PROPOSALS.length ? 'Try a different filter or search term.' : 'Click "New Proposal" above to create your first one.'}</div>
-    </div></div>`;
+    </td></tr>`;
     return;
   }
 
-  list.innerHTML = filtered.map(p => {
-    const ownerInit = initials(p.owner_name, p.owner_email);
+  const WA_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>`;
+
+  tbody.innerHTML = filtered.map(p => {
     const ownerName = p.owner_name || p.owner_email?.split('@')[0] || '—';
     const titleLabel = p.title || (p.client_company ? `Proposal for ${p.client_company}` : 'Untitled Proposal');
     const isSel = p.id === SELECTED_ID;
@@ -801,62 +824,59 @@ function renderProposals(){
     const cat = p.category || '';
     const catCls = categoryClass(cat);
     const dateMain = p.sent_at || p.created_at || p.updated_at;
-    return `<div class="row data ${isSel?'selected':''}" data-id="${p.id}">
-      <div class="cell id">
+    const hasPhone = !!p.client_phone;
+    return `<tr class="data-row ${isSel?'selected':''}" data-id="${p.id}">
+      <td class="col-id">
         <div class="pno" title="${esc(p.pno || '')}">${esc(p.pno || '—')}</div>
         <div class="sub">${esc(ownerName.split(' ')[0] || '')}</div>
-      </div>
-      <div class="cell title">
+      </td>
+      <td class="col-title">
         <div class="ttl" title="${esc(titleLabel)}">${esc(titleLabel)}</div>
-        <div class="sub sub-desktop">${esc(p.industry || titleLabel.split(' ').slice(-2).join(' '))}</div>
-        <div class="sub sub-mobile" style="display:none">
-          <span>${esc(clientLabel)}</span>
-          ${cat ? `<span class="dot-sep">·</span><span>${esc(cat)}</span>` : ''}
-        </div>
-      </div>
-      <div class="cell client">
+        <div class="sub">${esc(p.industry || cat || '')}</div>
+      </td>
+      <td class="col-client">
         <div class="ttl" title="${esc(clientLabel)}">${esc(clientLabel)}</div>
-        ${p.client_phone
-          ? `<div class="sub" style="display:flex;align-items:center;gap:6px">
-              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'DM Mono',monospace">${esc(p.client_phone)}</span>
-              <button class="wa-btn" title="Send via WhatsApp" onclick="event.stopPropagation();sendWhatsApp('${p.id}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></button>
-            </div>`
-          : (p.client_email ? `<div class="sub" title="${esc(p.client_email)}">${esc(p.client_email)}</div>` : '')}
-      </div>
-      <div class="cell type">
+        <div class="sub">${esc(p.client_phone || p.client_email || '')}</div>
+      </td>
+      <td class="col-type">
         ${cat
           ? `<span class="type-badge ${catCls}" title="${esc(cat)}"><span class="tbd"></span><span class="tbl">${esc(cat)}</span></span>`
           : `<span style="opacity:.3;font-size:11.5px">—</span>`}
-      </div>
-      <div class="cell"><span class="status ${p.status}"><span class="dot"></span>${p.status}</span></div>
-      <div class="cell value">
-        <div class="v">${p.total ? fmtMoneyCompact(p.currency, p.total) : '—'}</div>
-        <div class="c">${esc(p.currency || 'INR')}</div>
-      </div>
-      <div class="cell date" title="${fmtDateFull(dateMain)}">
-        <div class="d">${fmtDate(dateMain)}</div>
-        <div class="ds">${p.sent_at ? 'sent' : 'created'}</div>
-      </div>
-      <div class="cell row-actions" onclick="event.stopPropagation()">
-        <button class="row-menu-btn" onclick="toggleMenu('${p.id}', event)" title="Actions">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
-        </button>
-        <div class="row-menu" id="menu-${p.id}">
-          <button onclick="openDrawer('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View details</button>
-          <button onclick="editProposal('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Open editor</button>
-          <button onclick="openAsClient('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14L21 3M19 14v7H3V5h7"/></svg>Preview as client</button>
-          <div class="div"></div>
-          ${p.client_phone ? `<button onclick="sendWhatsApp('${p.id}')" style="color:#42d77f"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>Send via WhatsApp</button>` : ''}
-          <button onclick="copyShareLink('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy share link</button>
-          ${ME.role === 'admin' || p.owner_id === ME.id
-            ? `<div class="div"></div><button class="danger" onclick="deleteProposal('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Delete</button>`
-            : ''}
+      </td>
+      <td class="col-status"><span class="status ${p.status}"><span class="dot"></span>${p.status}</span></td>
+      <td class="col-value right">
+        <div class="money-v">${p.total ? fmtMoneyCompact(p.currency, p.total) : '—'}</div>
+        <div class="money-c">${esc(p.currency || 'INR')}</div>
+      </td>
+      <td class="col-date right" title="${fmtDateFull(dateMain)}">
+        <div class="date-d">${fmtDate(dateMain)}</div>
+        <div class="date-s">${p.sent_at ? 'sent' : 'created'}</div>
+      </td>
+      <td class="col-actions" onclick="event.stopPropagation()">
+        <div class="actions-wrap">
+          <button class="wa-btn ${hasPhone?'':''}" ${hasPhone?'':'disabled title="No client phone on this proposal"'} onclick="sendWhatsApp('${p.id}')" title="Send via WhatsApp">
+            ${WA_SVG}<span class="wa-label">WhatsApp</span>
+          </button>
+          <div class="menu-wrap">
+            <button class="menu-btn" onclick="toggleMenu('${p.id}', event)" title="More actions">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="font-size:initial"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            </button>
+            <div class="row-menu" id="menu-${p.id}">
+              <button onclick="openDrawer('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View details</button>
+              <button onclick="editProposal('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Open editor</button>
+              <button onclick="openAsClient('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14L21 3M19 14v7H3V5h7"/></svg>Preview as client</button>
+              <button onclick="copyShareLink('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy share link</button>
+              ${ME.role === 'admin' || p.owner_id === ME.id
+                ? `<div class="div"></div><button class="danger" onclick="deleteProposal('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Delete</button>`
+                : ''}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>`;
+      </td>
+    </tr>`;
   }).join('');
 
-  list.querySelectorAll('.row.data').forEach(r => {
+  tbody.querySelectorAll('tr.data-row').forEach(r => {
     r.addEventListener('click', () => openDrawer(r.dataset.id));
   });
 }
@@ -1057,7 +1077,34 @@ $$('#statusFilter .pill').forEach(p => {
     renderProposals();
   });
 });
-$('#sortBy').addEventListener('change', (e) => { FILTER.sort = e.target.value; renderProposals(); });
+$('#sortBy').addEventListener('change', (e) => { FILTER.sort = e.target.value; updateSortIndicators(); renderProposals(); });
+
+// Click sortable column headers to toggle ascending / descending
+document.querySelectorAll('table.proposals th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.sort;
+    const [curCol, curDir] = FILTER.sort.split(':');
+    const dir = (curCol === col && curDir === 'desc') ? 'asc' : 'desc';
+    FILTER.sort = col + ':' + dir;
+    // Sync the <select> if there's a matching option, else leave it
+    const sel = $('#sortBy');
+    const want = col + ':' + dir;
+    [...sel.options].some(o => { if (o.value === want){ sel.value = want; return true; } });
+    updateSortIndicators();
+    renderProposals();
+  });
+});
+
+function updateSortIndicators(){
+  const [col, dir] = FILTER.sort.split(':');
+  document.querySelectorAll('table.proposals th[data-sort]').forEach(th => {
+    const isActive = th.dataset.sort === col;
+    th.classList.toggle('sorted', isActive);
+    const arrow = th.querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = dir === 'asc' ? '↑' : '↓';
+  });
+}
+updateSortIndicators();
 
 // "/" shortcut focuses search
 document.addEventListener('keydown', (e) => {
