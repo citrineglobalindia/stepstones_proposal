@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stepstones — Proposals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --gold:#f4c430;--gold-hi:#fcd146;
+    --bg:#0b0b0d;--surface:#161618;--surface-2:#1c1c20;
+    --line:#2a2a2e;--line-soft:#1f1f23;
+    --text:#fff;--mute:rgba(255,255,255,.62);--mute-2:rgba(255,255,255,.42);
+    --ok:#2ecc71;--warn:#f4c430;--err:#ff6b6b;--info:#5aa9ff;--neutral:#7a7a82;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter Tight',system-ui,sans-serif;min-height:100vh}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit}
+
+  /* Header */
+  .top{position:sticky;top:0;background:rgba(11,11,13,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);z-index:10}
+  .top-inner{max-width:1280px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px}
+  .brand{display:flex;gap:10px;align-items:center}
+  .brand .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--gold),#e6a800);display:flex;align-items:center;justify-content:center;font-weight:800;color:#1a1100;font-size:18px;font-family:'Fraunces',serif}
+  .brand .nm{font-weight:700;font-size:15px;line-height:1.1}
+  .brand .sub{font-size:10px;opacity:.55;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+  .top-spacer{flex:1}
+  .top-user{display:flex;gap:10px;align-items:center;font-size:13px}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#e6a800,#a87b00);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1100;font-size:13px}
+  .role-chip{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:rgba(244,196,48,.12);color:var(--gold);font-weight:600;border:1px solid rgba(244,196,48,.25)}
+  .role-chip.sales{background:rgba(90,169,255,.1);color:var(--info);border-color:rgba(90,169,255,.3)}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:9px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s}
+  .btn-ghost:hover{background:var(--surface);border-color:#3a3a3e}
+  .btn-ghost.danger{color:#ff9090;border-color:#3a2a2a}
+  .btn-ghost.danger:hover{background:rgba(255,107,107,.08);border-color:#5a3a3a}
+
+  /* Layout */
+  .shell{max-width:1280px;margin:0 auto;padding:32px 24px 80px}
+  .hero{display:flex;align-items:flex-end;gap:18px;justify-content:space-between;flex-wrap:wrap;margin-bottom:28px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:42px;margin:0;letter-spacing:-.015em}
+  h1 em{font-style:italic;color:var(--gold);font-weight:600}
+  .lead{opacity:.65;margin:6px 0 0;font-size:15px}
+
+  .btn-primary{background:var(--gold);color:#1a1100;border:0;border-radius:11px;font-weight:700;font-size:14px;padding:12px 18px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s}
+  .btn-primary:hover{background:var(--gold-hi)}
+  .btn-primary svg{width:16px;height:16px;stroke-width:2.5}
+
+  /* Filters / toolbar */
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px;align-items:center}
+  .search{flex:1;min-width:240px;position:relative}
+  .search input{width:100%;padding:11px 14px 11px 38px;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;transition:border-color .15s}
+  .search input:focus{outline:none;border-color:var(--gold)}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;opacity:.5}
+  .pill-tabs{display:flex;gap:5px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--line)}
+  .pill{padding:7px 12px;border-radius:7px;font-size:12.5px;cursor:pointer;color:var(--mute);font-weight:500;border:0;background:transparent;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+  .pill:hover{color:var(--text)}
+  .pill.active{background:var(--surface-2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line)}
+  .pill .ct{font-size:10.5px;opacity:.6;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:99px;font-weight:600}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.55;font-weight:600;margin-bottom:6px}
+  .stat .val{font-size:28px;font-family:'Fraunces',serif;font-weight:500;line-height:1}
+  .stat .delta{font-size:12px;opacity:.5;margin-top:4px}
+  @media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  /* Proposals table */
+  .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .row{display:grid;grid-template-columns:1.4fr 1.2fr 1fr 110px 140px 60px;gap:16px;align-items:center;padding:16px 22px;border-bottom:1px solid var(--line-soft);transition:background .15s}
+  .row:last-child{border-bottom:0}
+  .row.head{background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:0}
+  .row.head .cell{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.55;font-weight:600}
+  .row.data:hover{background:var(--surface-2);cursor:pointer}
+  .cell .ttl{font-weight:600;font-size:14.5px;line-height:1.25;color:var(--text)}
+  .cell .meta{font-size:12px;opacity:.55;margin-top:3px}
+  .cell .money{font-family:'DM Mono',monospace;font-size:14px;font-weight:500}
+  .row.empty{padding:50px;justify-content:center;text-align:center;color:var(--mute);grid-template-columns:1fr}
+  .row.empty .big{font-family:'Fraunces',serif;font-size:22px;font-weight:500;color:var(--text);margin-bottom:8px}
+
+  .status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em}
+  .status .dot{width:6px;height:6px;border-radius:50%}
+  .status.draft{background:rgba(122,122,130,.15);color:#a0a0aa}
+  .status.draft .dot{background:#7a7a82}
+  .status.sent{background:rgba(90,169,255,.13);color:#7ab8ff}
+  .status.sent .dot{background:var(--info)}
+  .status.viewed{background:rgba(244,196,48,.13);color:#f4c430}
+  .status.viewed .dot{background:var(--gold)}
+  .status.accepted{background:rgba(46,204,113,.13);color:#5ae08a}
+  .status.accepted .dot{background:var(--ok)}
+  .status.declined{background:rgba(255,107,107,.13);color:#ff8585}
+  .status.declined .dot{background:var(--err)}
+
+  .row-actions{position:relative}
+  .row-menu-btn{background:transparent;border:0;color:var(--mute);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .row-menu-btn:hover{background:var(--line)}
+  .row-menu{position:absolute;right:0;top:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;min-width:170px;padding:6px;z-index:50;display:none;box-shadow:0 12px 32px rgba(0,0,0,.4)}
+  .row-menu.show{display:block}
+  .row-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;color:var(--text);padding:8px 12px;font-size:13px;border-radius:6px;cursor:pointer}
+  .row-menu button:hover{background:var(--line)}
+  .row-menu button.danger{color:#ff8585}
+
+  @media (max-width:900px){
+    .row{grid-template-columns:1fr 100px 60px;gap:10px}
+    .row.head{display:none}
+    .row.data{padding:14px 16px}
+    .cell.client,.cell.owner,.cell.updated{display:none}
+    .cell.title .meta-mobile{display:block;font-size:11.5px;opacity:.55;margin-top:5px}
+    .cell.title .meta-mobile span{margin-right:10px}
+  }
+
+  /* Modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+  .modal-bg.show{display:flex}
+  .modal{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:32px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto}
+  .modal h2{font-family:'Fraunces',serif;font-weight:500;font-size:26px;margin:0 0 8px}
+  .modal .sub{opacity:.6;font-size:14px;margin-bottom:24px}
+  .modal label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:14px 0 6px;font-weight:600}
+  .modal input,.modal select{width:100%;padding:11px 14px;background:var(--input,#0e0e10);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit}
+  .modal input:focus,.modal select:focus{outline:none;border-color:var(--gold)}
+  .modal .actions{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
+  .modal .err{color:#ff8585;font-size:13px;margin-top:10px;min-height:18px}
+
+  /* Tabs */
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .tab{padding:10px 18px;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--mute);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+  .tab:hover{color:var(--text)}
+  .tab.active{color:var(--text);border-bottom-color:var(--gold)}
+
+  /* Users table */
+  .urow{display:grid;grid-template-columns:1.5fr 1fr 120px 130px 60px;gap:16px;align-items:center;padding:14px 22px;border-bottom:1px solid var(--line-soft)}
+  .urow:last-child{border-bottom:0}
+  .urow.head{background:var(--surface-2);border-bottom:1px solid var(--line)}
+  .urow.head .cell{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.55;font-weight:600}
+  .urow.data .cell.name{font-weight:600;font-size:14px}
+  .urow .cell.email{opacity:.7;font-size:13px;word-break:break-all}
+  @media(max-width:760px){.urow{grid-template-columns:1fr 110px 50px}.urow .cell.email,.urow .cell.added{display:none}}
+
+  /* Loading */
+  .skeleton{height:62px;background:linear-gradient(90deg,#1a1a1c 0%,#202024 50%,#1a1a1c 100%);background-size:200% 100%;animation:sk 1.5s infinite;border-bottom:1px solid var(--line-soft)}
+  @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#fff;color:#000;padding:11px 20px;border-radius:99px;font-size:13.5px;font-weight:500;opacity:0;transition:all .25s;z-index:200;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="mark">C</div>
+      <div><div class="nm">Stepstones</div><div class="sub">Proposal Studio</div></div>
+    </div>
+    <div class="top-spacer"></div>
+    <div class="top-user" id="topUser" style="display:none">
+      <span class="role-chip" id="roleChip">sales</span>
+      <div class="avatar" id="avatarInitial">?</div>
+      <button class="btn-ghost" id="logoutBtn">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+
+  <div class="hero">
+    <div>
+      <h1>Your <em>proposals</em>.</h1>
+      <p class="lead" id="welcomeLead">Manage everything you've sent — at a glance.</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-ghost" id="inviteBtn" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+        Invite user
+      </button>
+      <a class="btn-primary" href="./index.html?new=1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+        New Proposal
+      </a>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="proposals">Proposals</button>
+    <button class="tab" data-tab="users" id="usersTab" style="display:none">Users</button>
+  </div>
+
+  <!-- PROPOSALS TAB -->
+  <div id="tab-proposals">
+    <div class="stats" id="stats">
+      <div class="stat"><div class="lbl">Total</div><div class="val" id="stTotal">—</div><div class="delta">All proposals</div></div>
+      <div class="stat"><div class="lbl">In Play</div><div class="val" id="stPlay">—</div><div class="delta">Sent + Viewed</div></div>
+      <div class="stat"><div class="lbl">Accepted</div><div class="val" id="stAccepted">—</div><div class="delta">Won deals</div></div>
+      <div class="stat"><div class="lbl">Pipeline Value</div><div class="val" id="stValue">—</div><div class="delta">All open proposals</div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="searchInp" type="search" placeholder="Search by title, client, owner…">
+      </div>
+      <div class="pill-tabs" id="statusFilter">
+        <button class="pill active" data-status="all">All <span class="ct" id="ctAll">0</span></button>
+        <button class="pill" data-status="draft">Draft <span class="ct" id="ctDraft">0</span></button>
+        <button class="pill" data-status="sent">Sent <span class="ct" id="ctSent">0</span></button>
+        <button class="pill" data-status="viewed">Viewed <span class="ct" id="ctViewed">0</span></button>
+        <button class="pill" data-status="accepted">Accepted <span class="ct" id="ctAccepted">0</span></button>
+        <button class="pill" data-status="declined">Declined <span class="ct" id="ctDeclined">0</span></button>
+      </div>
+    </div>
+
+    <div class="table-wrap" id="propWrap">
+      <div class="row head">
+        <div class="cell">Proposal</div>
+        <div class="cell client">Client</div>
+        <div class="cell owner">Owner</div>
+        <div class="cell">Status</div>
+        <div class="cell updated">Updated</div>
+        <div class="cell"></div>
+      </div>
+      <div id="propList">
+        <div class="skeleton"></div>
+        <div class="skeleton" style="opacity:.7"></div>
+        <div class="skeleton" style="opacity:.4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS TAB (admin only) -->
+  <div id="tab-users" style="display:none">
+    <div class="table-wrap">
+      <div class="urow head">
+        <div class="cell">Name</div>
+        <div class="cell email">Email</div>
+        <div class="cell">Role</div>
+        <div class="cell added">Added</div>
+        <div class="cell"></div>
+      </div>
+      <div id="userList"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Invite User modal -->
+<div class="modal-bg" id="inviteModal">
+  <form class="modal" id="inviteForm">
+    <h2>Invite a user</h2>
+    <div class="sub">They'll get access with the role you set below.</div>
+    <label>Full name</label>
+    <input id="invName" required placeholder="Jane Doe">
+    <label>Email</label>
+    <input id="invEmail" type="email" required placeholder="jane@stepstones.in">
+    <label>Initial password</label>
+    <input id="invPassword" required minlength="8" placeholder="At least 8 characters">
+    <label>Role</label>
+    <select id="invRole">
+      <option value="sales">Sales — can create + edit own proposals</option>
+      <option value="admin">Admin — full access, all proposals</option>
+    </select>
+    <div class="err" id="invErr"></div>
+    <div class="actions">
+      <button type="button" class="btn-ghost" id="invCancel">Cancel</button>
+      <button type="submit" class="btn-primary" id="invSubmit">Send invite</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="sp-config.js"></script>
+<script>
+const sb = window.supabase.createClient(SP_CFG.URL, SP_CFG.KEY);
+
+let ME = null;
+let PROPOSALS = [];
+let FILTER = { status: 'all', q: '' };
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+function showToast(msg, ms=2200){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), ms);
+}
+
+function fmtMoney(currency, v){
+  if (v == null) return '—';
+  try { return new Intl.NumberFormat('en-IN',{style:'currency',currency:currency||'INR',maximumFractionDigits:0}).format(v); }
+  catch { return (currency||'₹') + ' ' + v; }
+}
+function fmtDate(d){
+  if (!d) return '—';
+  const dt = new Date(d);
+  const now = new Date();
+  const diff = (now - dt) / 86400000;
+  if (diff < 1) return 'today';
+  if (diff < 2) return 'yesterday';
+  if (diff < 7) return Math.floor(diff) + 'd ago';
+  return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
+function initials(name, email){
+  const src = (name || email || '?').trim();
+  const parts = src.split(/[\s@.]+/).filter(Boolean);
+  return ((parts[0]?.[0] || '?') + (parts[1]?.[0] || '')).toUpperCase();
+}
+
+// ===== AUTH BOOTSTRAP =====
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { location.replace('./login.html'); return; }
+  const { data: profile, error } = await sb.from('sp_profiles').select('*').eq('id', session.user.id).maybeSingle();
+  if (error || !profile) {
+    // Trigger missed? Try to insert
+    const upserted = await sb.from('sp_profiles').upsert({
+      id: session.user.id,
+      email: session.user.email,
+      full_name: session.user.user_metadata?.full_name || session.user.email,
+    }, { onConflict: 'id' }).select().single();
+    if (upserted.error) { console.error(upserted.error); alert('Failed to load profile: ' + upserted.error.message); return; }
+    ME = upserted.data;
+  } else {
+    ME = profile;
+  }
+  hydrateUI();
+  await loadProposals();
+  if (ME.role === 'admin') await loadUsers();
+})();
+
+function hydrateUI(){
+  $('#topUser').style.display='flex';
+  $('#avatarInitial').textContent = initials(ME.full_name, ME.email);
+  $('#roleChip').textContent = ME.role;
+  $('#roleChip').classList.toggle('sales', ME.role === 'sales');
+  $('#welcomeLead').textContent = ME.role === 'admin'
+    ? 'Every proposal across the team — sent, viewed, and signed.'
+    : 'Manage everything you\'ve sent — at a glance.';
+  if (ME.role === 'admin') {
+    $('#inviteBtn').style.display='inline-flex';
+    $('#usersTab').style.display='inline-flex';
+  }
+}
+
+// ===== LOAD PROPOSALS =====
+async function loadProposals(){
+  const { data, error } = await sb
+    .from('sp_proposals_view')
+    .select('*')
+    .order('updated_at', { ascending: false });
+  if (error) {
+    $('#propList').innerHTML = `<div class="row empty"><div><div class="big">Couldn't load proposals.</div><div>${error.message}</div></div></div>`;
+    return;
+  }
+  PROPOSALS = data || [];
+  renderStats();
+  renderProposals();
+}
+
+function renderStats(){
+  const total = PROPOSALS.length;
+  const inPlay = PROPOSALS.filter(p => p.status === 'sent' || p.status === 'viewed').length;
+  const accepted = PROPOSALS.filter(p => p.status === 'accepted').length;
+  const pipelineValue = PROPOSALS
+    .filter(p => ['sent','viewed','draft'].includes(p.status))
+    .reduce((s,p) => s + Number(p.total||0), 0);
+  $('#stTotal').textContent = total;
+  $('#stPlay').textContent = inPlay;
+  $('#stAccepted').textContent = accepted;
+  $('#stValue').textContent = fmtMoney('INR', pipelineValue);
+
+  // filter counts
+  const counts = { all: total, draft: 0, sent: 0, viewed: 0, accepted: 0, declined: 0 };
+  PROPOSALS.forEach(p => { counts[p.status] = (counts[p.status]||0) + 1; });
+  $('#ctAll').textContent = counts.all;
+  $('#ctDraft').textContent = counts.draft;
+  $('#ctSent').textContent = counts.sent;
+  $('#ctViewed').textContent = counts.viewed;
+  $('#ctAccepted').textContent = counts.accepted;
+  $('#ctDeclined').textContent = counts.declined;
+}
+
+function renderProposals(){
+  const q = FILTER.q.toLowerCase();
+  const filtered = PROPOSALS.filter(p => {
+    if (FILTER.status !== 'all' && p.status !== FILTER.status) return false;
+    if (!q) return true;
+    return (p.title||'').toLowerCase().includes(q)
+        || (p.client_company||'').toLowerCase().includes(q)
+        || (p.client_name||'').toLowerCase().includes(q)
+        || (p.owner_name||'').toLowerCase().includes(q)
+        || (p.owner_email||'').toLowerCase().includes(q)
+        || (p.pno||'').toLowerCase().includes(q);
+  });
+
+  const list = $('#propList');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="row empty"><div>
+      <div class="big">${PROPOSALS.length ? 'No matches.' : 'No proposals yet.'}</div>
+      <div>${PROPOSALS.length ? 'Try a different filter or search term.' : 'Click "New Proposal" to create your first one.'}</div>
+    </div></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(p => {
+    const ownerInit = initials(p.owner_name, p.owner_email);
+    const titleLabel = p.title || (p.client_company ? `Proposal for ${p.client_company}` : 'Untitled Proposal');
+    return `<div class="row data" data-id="${p.id}">
+      <div class="cell title">
+        <div class="ttl">${escapeHtml(titleLabel)}</div>
+        <div class="meta">${p.pno ? escapeHtml(p.pno) + ' · ' : ''}${fmtMoney(p.currency, p.total)}</div>
+        <div class="meta-mobile" style="display:none">
+          <span>${escapeHtml(p.client_company || p.client_name || '—')}</span>
+          <span>${fmtDate(p.updated_at)}</span>
+        </div>
+      </div>
+      <div class="cell client">
+        <div class="ttl">${escapeHtml(p.client_company || p.client_name || '—')}</div>
+        <div class="meta">${escapeHtml(p.client_email || '')}</div>
+      </div>
+      <div class="cell owner">
+        <div class="ttl">${escapeHtml(p.owner_name || p.owner_email || '—')}</div>
+        <div class="meta">${ownerInit}</div>
+      </div>
+      <div class="cell">
+        <span class="status ${p.status}"><span class="dot"></span>${p.status}</span>
+      </div>
+      <div class="cell updated">
+        <div class="meta">${fmtDate(p.updated_at)}</div>
+      </div>
+      <div class="cell row-actions" onclick="event.stopPropagation()">
+        <button class="row-menu-btn" onclick="toggleMenu('${p.id}')">⋯</button>
+        <div class="row-menu" id="menu-${p.id}">
+          <button onclick="editProposal('${p.id}')">Open editor</button>
+          <button onclick="openClientLink('${p.id}')">View as client</button>
+          <button onclick="copyShareLink('${p.id}')">Copy share link</button>
+          ${ME.role === 'admin' || p.owner_id === ME.id
+            ? `<button class="danger" onclick="deleteProposal('${p.id}')">Delete</button>`
+            : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // row click → editor
+  list.querySelectorAll('.row.data').forEach(r => {
+    r.addEventListener('click', () => {
+      editProposal(r.dataset.id);
+    });
+  });
+}
+
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+window.toggleMenu = function(id){
+  $$('.row-menu').forEach(m => { if (m.id !== `menu-${id}`) m.classList.remove('show'); });
+  $(`#menu-${id}`).classList.toggle('show');
+};
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.row-actions')) $$('.row-menu').forEach(m => m.classList.remove('show'));
+});
+
+window.editProposal = function(id){
+  location.href = `./index.html?id=${id}`;
+};
+
+window.openClientLink = async function(id){
+  const p = PROPOSALS.find(x => x.id === id);
+  if (!p || !p.share_token) {
+    // generate one
+    const tok = crypto.randomUUID().replace(/-/g,'').slice(0,16);
+    const { error } = await sb.from('sp_proposals').update({ share_token: tok }).eq('id', id);
+    if (error) return showToast('Error: ' + error.message);
+    p.share_token = tok;
+  }
+  window.open(`./index.html#t=${p.share_token}`, '_blank');
+};
+
+window.copyShareLink = async function(id){
+  const p = PROPOSALS.find(x => x.id === id);
+  if (!p) return;
+  if (!p.share_token){
+    const tok = crypto.randomUUID().replace(/-/g,'').slice(0,16);
+    const { error } = await sb.from('sp_proposals').update({ share_token: tok, status: p.status === 'draft' ? 'sent' : p.status, sent_at: p.sent_at || new Date().toISOString() }).eq('id', id);
+    if (error) return showToast('Error: ' + error.message);
+    p.share_token = tok;
+    if (p.status === 'draft') { p.status = 'sent'; renderStats(); renderProposals(); }
+  }
+  const url = `${location.origin}${location.pathname.replace(/[^\/]*$/, '')}index.html#t=${p.share_token}`;
+  await navigator.clipboard.writeText(url);
+  showToast('Share link copied');
+};
+
+window.deleteProposal = async function(id){
+  if (!confirm('Delete this proposal permanently?')) return;
+  const { error } = await sb.from('sp_proposals').delete().eq('id', id);
+  if (error) return showToast('Error: ' + error.message);
+  PROPOSALS = PROPOSALS.filter(p => p.id !== id);
+  renderStats(); renderProposals();
+  showToast('Deleted');
+};
+
+// ===== filters =====
+$('#searchInp').addEventListener('input', (e) => { FILTER.q = e.target.value; renderProposals(); });
+$$('#statusFilter .pill').forEach(p => {
+  p.addEventListener('click', () => {
+    $$('#statusFilter .pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    FILTER.status = p.dataset.status;
+    renderProposals();
+  });
+});
+
+// ===== tabs =====
+$$('#tabs .tab').forEach(t => {
+  t.addEventListener('click', () => {
+    $$('#tabs .tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    $('#tab-proposals').style.display = t.dataset.tab === 'proposals' ? '' : 'none';
+    $('#tab-users').style.display = t.dataset.tab === 'users' ? '' : 'none';
+  });
+});
+
+// ===== logout =====
+$('#logoutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  location.replace('./login.html');
+});
+
+// ===== Invite / Users (admin only) =====
+$('#inviteBtn').addEventListener('click', () => {
+  $('#invErr').textContent = '';
+  $('#inviteForm').reset();
+  $('#inviteModal').classList.add('show');
+});
+$('#invCancel').addEventListener('click', () => $('#inviteModal').classList.remove('show'));
+$('#inviteModal').addEventListener('click', (e) => { if (e.target.id === 'inviteModal') $('#inviteModal').classList.remove('show'); });
+
+$('#inviteForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('#invSubmit');
+  const errEl = $('#invErr');
+  errEl.textContent = '';
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const body = {
+    email: $('#invEmail').value.trim(),
+    password: $('#invPassword').value,
+    full_name: $('#invName').value.trim(),
+    role: $('#invRole').value,
+  };
+  try {
+    const { data, error } = await sb.functions.invoke('sp-invite-user', { body });
+    if (error) throw error;
+    if (data && data.error) throw new Error(data.error);
+    $('#inviteModal').classList.remove('show');
+    showToast('Invite sent ✓');
+    await loadUsers();
+  } catch (err) {
+    errEl.textContent = err.message || 'Failed to invite user';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send invite';
+  }
+});
+
+async function loadUsers(){
+  const { data, error } = await sb.from('sp_profiles').select('*').order('created_at', { ascending: false });
+  if (error) return;
+  const ul = $('#userList');
+  ul.innerHTML = data.map(u => `
+    <div class="urow data">
+      <div class="cell name">${escapeHtml(u.full_name || '—')}</div>
+      <div class="cell email">${escapeHtml(u.email)}</div>
+      <div class="cell">
+        <select onchange="updateRole('${u.id}', this.value)" ${u.id === ME.id ? 'disabled' : ''}>
+          <option value="sales" ${u.role==='sales'?'selected':''}>Sales</option>
+          <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
+        </select>
+      </div>
+      <div class="cell added"><div class="meta">${fmtDate(u.created_at)}</div></div>
+      <div class="cell"></div>
+    </div>
+  `).join('');
+}
+
+window.updateRole = async function(id, role){
+  const { error } = await sb.from('sp_profiles').update({ role }).eq('id', id);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('Role updated ✓');
+};
+</script>
+</body>
+</html>
