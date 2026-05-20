@@ -133,24 +133,27 @@
   .row{
     display:grid;
     grid-template-columns:
-      minmax(0, 2fr)    /* title       */
-      minmax(0, 1.4fr)  /* client      */
-      minmax(0, 1.2fr)  /* owner       */
-      110px             /* status      */
-      90px              /* updated     */
-      48px;             /* actions     */
-    gap:18px;
+      120px              /* id          */
+      minmax(0, 2fr)     /* title       */
+      minmax(0, 1.4fr)   /* client      */
+      minmax(0, 130px)   /* type        */
+      100px              /* status      */
+      110px              /* value       */
+      90px               /* date        */
+      40px;              /* actions     */
+    gap:14px;
     align-items:center;
-    padding:14px 22px;
+    padding:14px 20px;
     border-bottom:1px solid var(--line-soft);
     transition:background .12s;
     min-height:64px;
   }
   .row:last-child{border-bottom:0}
-  .row.head{background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:71px;z-index:5;min-height:42px;padding-top:11px;padding-bottom:11px}
-  .row.head .cell{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;opacity:.55;font-weight:600;cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
-  .row.head .cell.updated{justify-content:flex-end;text-align:right;display:flex}
-  .row.head .cell:hover{opacity:.85;color:var(--gold)}
+  .row.head{background:var(--surface-2);border-bottom:1px solid var(--line);min-height:44px;padding-top:12px;padding-bottom:12px}
+  .row.head .cell{font-size:10px;text-transform:uppercase;letter-spacing:.13em;opacity:.55;font-weight:700;user-select:none;display:flex;align-items:center;gap:5px;white-space:nowrap;cursor:default}
+  .row.head .cell[data-sort]{cursor:pointer}
+  .row.head .cell[data-sort]:hover{opacity:.9;color:var(--gold)}
+  .row.head .cell.right{justify-content:flex-end;text-align:right}
   .row.head .cell .sort-arrow{opacity:0;transition:opacity .15s}
   .row.head .cell.sorted .sort-arrow{opacity:1}
   .row.data{cursor:pointer}
@@ -158,29 +161,63 @@
   .row.data.selected{background:linear-gradient(90deg,rgba(244,196,48,.05),transparent);box-shadow:inset 3px 0 0 var(--gold)}
 
   /* Cell layout: every cell is a single-line title + optional muted sub */
-  .cell{min-width:0}
+  .cell{min-width:0;display:flex;flex-direction:column;justify-content:center}
+  .cell.center{justify-content:center;align-items:flex-start}
+  .cell.right{align-items:flex-end;text-align:right}
+
   .cell .ttl{
     font-weight:600;font-size:13.5px;line-height:1.3;color:var(--text);
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    max-width:100%;
   }
-  .cell .meta{
-    font-size:11.5px;opacity:.55;margin-top:3px;line-height:1.3;
+  .cell .sub{
+    font-size:11px;opacity:.5;margin-top:3px;line-height:1.3;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    display:flex;align-items:center;gap:8px;flex-wrap:nowrap;
+    max-width:100%;
   }
-  .cell .meta > *{flex-shrink:0;min-width:0}
-  .cell .meta .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex-shrink:1}
-  .cell .pno{font-family:'DM Mono',monospace;font-size:10.5px;opacity:.7;background:var(--surface-2);padding:2px 7px;border-radius:4px;font-weight:500;letter-spacing:.02em;border:1px solid var(--line-soft);flex-shrink:0}
-  .cell .money{font-family:'DM Mono',monospace;font-size:12.5px;opacity:.85;flex-shrink:0}
-  .cell .dot-sep{opacity:.3;flex-shrink:0}
 
-  .cell.owner .owner-pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;min-width:0;width:100%}
-  .cell.owner .owner-pill .av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#3a3a40,#1c1c20);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--mute);border:1px solid var(--line);flex-shrink:0}
-  .cell.owner .owner-pill .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+  /* ID column */
+  .cell.id .pno{font-family:'DM Mono',monospace;font-size:11.5px;opacity:.85;font-weight:500;letter-spacing:.02em;color:var(--gold)}
+  .cell.id .sub{font-family:'DM Mono',monospace;font-size:10.5px}
 
-  .cell.updated{text-align:right;font-size:12px;opacity:.65;font-variant-numeric:tabular-nums;font-feature-settings:'tnum'}
+  /* Money */
+  .cell.value{align-items:flex-end;text-align:right;font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+  .cell.value .v{font-family:'DM Mono',monospace;font-size:13.5px;font-weight:500;color:var(--text)}
+  .cell.value .c{font-size:10px;opacity:.45;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:2px}
 
-  .row.empty{padding:60px 30px;justify-content:center;text-align:center;color:var(--mute);grid-template-columns:1fr;min-height:0}
+  /* Date */
+  .cell.date{text-align:right;align-items:flex-end;font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+  .cell.date .d{font-size:12.5px;opacity:.85}
+  .cell.date .ds{font-size:10.5px;opacity:.4;margin-top:2px}
+
+  /* Type / category badge */
+  .type-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:10.5px;font-weight:600;letter-spacing:.02em;
+    padding:4px 10px;border-radius:99px;
+    background:rgba(255,255,255,.05);color:#bbb;border:1px solid var(--line-soft);
+    max-width:100%;
+  }
+  .type-badge .tbd{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.85}
+  .type-badge .tbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .type-badge.software{background:rgba(90,169,255,.1);color:#8cbeff;border-color:rgba(90,169,255,.25)}
+  .type-badge.web{background:rgba(61,219,135,.1);color:#7ee5a5;border-color:rgba(61,219,135,.25)}
+  .type-badge.marketing{background:rgba(255,121,200,.1);color:#ffa8d4;border-color:rgba(255,121,200,.25)}
+  .type-badge.bundle{background:rgba(244,196,48,.12);color:var(--gold);border-color:rgba(244,196,48,.3)}
+  .type-badge.seo{background:rgba(170,120,255,.1);color:#c7a8ff;border-color:rgba(170,120,255,.25)}
+  .type-badge.mobile{background:rgba(94,212,205,.1);color:#8be3dd;border-color:rgba(94,212,205,.25)}
+  .type-badge.custom{background:rgba(255,160,90,.1);color:#ffc191;border-color:rgba(255,160,90,.25)}
+
+  /* Inline WA button */
+  .wa-btn{
+    background:rgba(37,211,102,.12);color:#42d77f;border:1px solid rgba(37,211,102,.25);
+    width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .15s;flex-shrink:0;padding:0;
+  }
+  .wa-btn:hover{background:rgba(37,211,102,.2);border-color:rgba(37,211,102,.45);transform:scale(1.05)}
+  .wa-btn svg{width:13px;height:13px}
+
+  .row.empty{padding:60px 30px;justify-content:center;text-align:center;color:var(--mute);grid-template-columns:1fr;min-height:0;display:block}
   .row.empty .big{font-family:'Fraunces',serif;font-size:24px;font-weight:500;color:var(--text);margin-bottom:8px;letter-spacing:-.01em}
   .row.empty svg{width:64px;height:64px;opacity:.25;margin-bottom:12px}
 
@@ -213,12 +250,28 @@
   .row-menu button.danger{color:#ff8585}
   .row-menu button.danger svg{color:#ff8585}
 
-  @media (max-width:900px){
-    .row{grid-template-columns:minmax(0,1fr) 96px 36px;gap:10px;padding:14px 16px}
+  @media (max-width:1180px){
+    .row{
+      grid-template-columns:
+        90px              /* id          */
+        minmax(0, 1.6fr)  /* title       */
+        minmax(0, 1.2fr)  /* client      */
+        100px             /* status      */
+        80px              /* date        */
+        36px;             /* actions     */
+      gap:12px;padding:14px 16px;
+    }
+    .cell.type, .cell.value{display:none}
+  }
+  @media (max-width:760px){
+    .row{
+      grid-template-columns:minmax(0,1fr) 90px 32px;
+      gap:10px;padding:13px 14px;
+    }
     .row.head{display:none}
-    .cell.client,.cell.owner{display:none}
-    .cell.updated{display:none}
-    .cell.title .meta-mobile{display:inline-flex !important}
+    .cell.id, .cell.client, .cell.date{display:none}
+    .cell.title .sub-mobile{display:flex !important;gap:8px;font-size:11px;opacity:.55;margin-top:5px;align-items:center}
+    .cell.title .sub-mobile .dot-sep{opacity:.3}
   }
 
   /* ===== Right Activity Panel ===== */
@@ -416,11 +469,13 @@
 
       <div class="data-card" id="propWrap">
         <div class="row head">
+          <div class="cell id" data-sort="pno">ID <span class="sort-arrow">↓</span></div>
           <div class="cell" data-sort="title">Proposal <span class="sort-arrow">↓</span></div>
           <div class="cell client">Client</div>
-          <div class="cell owner">Owner</div>
+          <div class="cell type">Type</div>
           <div class="cell">Status</div>
-          <div class="cell updated" data-sort="updated_at">Updated <span class="sort-arrow">↓</span></div>
+          <div class="cell value right" data-sort="total">Value <span class="sort-arrow">↓</span></div>
+          <div class="cell date right" data-sort="updated_at">Date <span class="sort-arrow">↓</span></div>
           <div class="cell"></div>
         </div>
         <div id="propList">
@@ -566,6 +621,51 @@ function initials(name, email){
 }
 function esc(s){ return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+// Map a category string to a CSS class for the type badge color
+function categoryClass(cat){
+  const c = (cat || '').toLowerCase();
+  if (/software/.test(c)) return 'software';
+  if (/mobile/.test(c)) return 'mobile';
+  if (/bundle/.test(c)) return 'bundle';
+  if (/seo|content/.test(c)) return 'seo';
+  if (/marketing/.test(c)) return 'marketing';
+  if (/website|web\b/.test(c)) return 'web';
+  if (/custom/.test(c)) return 'custom';
+  return '';
+}
+
+// Build a share link for a proposal, generating a token if missing
+async function ensureShareUrl(id){
+  const p = PROPOSALS.find(x => x.id === id);
+  if (!p) return null;
+  if (!p.share_token){
+    const tok = (crypto.randomUUID?.() || (Date.now()+''+Math.random())).replace(/-/g,'').slice(0,16);
+    const { error } = await sb.from('sp_proposals').update({
+      share_token: tok,
+      status: p.status === 'draft' ? 'sent' : p.status,
+      sent_at: p.sent_at || new Date().toISOString(),
+    }).eq('id', id);
+    if (error){ showToast(error.message, 'err'); return null; }
+    p.share_token = tok;
+    if (p.status === 'draft') { p.status = 'sent'; renderStats(); renderProposals(); }
+  }
+  return `${location.origin}${location.pathname.replace(/[^\/]*$/, '')}index.html#t=${p.share_token}`;
+}
+
+// Send proposal via WhatsApp using client phone
+window.sendWhatsApp = async (id) => {
+  const p = PROPOSALS.find(x => x.id === id);
+  if (!p) return showToast('Proposal not found', 'err');
+  if (!p.client_phone) return showToast('No client phone on this proposal', 'err');
+  const url = await ensureShareUrl(id);
+  if (!url) return;
+  const phone = p.client_phone.replace(/\D/g, '');
+  const greetName = p.client_name || (p.client_company || 'there');
+  const sender = ME?.full_name || 'Stepstones';
+  const msg = `Hi ${greetName},\n\nGreetings from Stepstones! Your proposal${p.pno ? ` ${p.pno}` : ''}${p.title ? ' — ' + p.title : ''} is ready.\n\nView it here:\n${url}\n\nLooking forward to your thoughts.\n\n— ${sender}`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
 // ===== AUTH BOOTSTRAP =====
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
@@ -698,27 +798,45 @@ function renderProposals(){
     const titleLabel = p.title || (p.client_company ? `Proposal for ${p.client_company}` : 'Untitled Proposal');
     const isSel = p.id === SELECTED_ID;
     const clientLabel = p.client_company || p.client_name || '—';
+    const cat = p.category || '';
+    const catCls = categoryClass(cat);
+    const dateMain = p.sent_at || p.created_at || p.updated_at;
     return `<div class="row data ${isSel?'selected':''}" data-id="${p.id}">
+      <div class="cell id">
+        <div class="pno" title="${esc(p.pno || '')}">${esc(p.pno || '—')}</div>
+        <div class="sub">${esc(ownerName.split(' ')[0] || '')}</div>
+      </div>
       <div class="cell title">
         <div class="ttl" title="${esc(titleLabel)}">${esc(titleLabel)}</div>
-        <div class="meta">
-          ${p.pno ? `<span class="pno">${esc(p.pno)}</span>` : ''}
-          <span class="money">${fmtMoney(p.currency, p.total)}</span>
-          <span class="meta-mobile" style="display:none">
-            <span class="dot-sep">·</span>
-            <span class="truncate">${esc(clientLabel)}</span>
-          </span>
+        <div class="sub sub-desktop">${esc(p.industry || titleLabel.split(' ').slice(-2).join(' '))}</div>
+        <div class="sub sub-mobile" style="display:none">
+          <span>${esc(clientLabel)}</span>
+          ${cat ? `<span class="dot-sep">·</span><span>${esc(cat)}</span>` : ''}
         </div>
       </div>
       <div class="cell client">
         <div class="ttl" title="${esc(clientLabel)}">${esc(clientLabel)}</div>
-        ${p.client_email ? `<div class="meta"><span class="truncate" title="${esc(p.client_email)}">${esc(p.client_email)}</span></div>` : ''}
+        ${p.client_phone
+          ? `<div class="sub" style="display:flex;align-items:center;gap:6px">
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'DM Mono',monospace">${esc(p.client_phone)}</span>
+              <button class="wa-btn" title="Send via WhatsApp" onclick="event.stopPropagation();sendWhatsApp('${p.id}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></button>
+            </div>`
+          : (p.client_email ? `<div class="sub" title="${esc(p.client_email)}">${esc(p.client_email)}</div>` : '')}
       </div>
-      <div class="cell owner">
-        <div class="owner-pill" title="${esc(ownerName)}"><div class="av">${ownerInit}</div><span class="nm">${esc(ownerName)}</span></div>
+      <div class="cell type">
+        ${cat
+          ? `<span class="type-badge ${catCls}" title="${esc(cat)}"><span class="tbd"></span><span class="tbl">${esc(cat)}</span></span>`
+          : `<span style="opacity:.3;font-size:11.5px">—</span>`}
       </div>
-      <div class="cell status-cell"><span class="status ${p.status}"><span class="dot"></span>${p.status}</span></div>
-      <div class="cell updated" title="${fmtDateFull(p.updated_at)}">${fmtDate(p.updated_at)}</div>
+      <div class="cell"><span class="status ${p.status}"><span class="dot"></span>${p.status}</span></div>
+      <div class="cell value">
+        <div class="v">${p.total ? fmtMoneyCompact(p.currency, p.total) : '—'}</div>
+        <div class="c">${esc(p.currency || 'INR')}</div>
+      </div>
+      <div class="cell date" title="${fmtDateFull(dateMain)}">
+        <div class="d">${fmtDate(dateMain)}</div>
+        <div class="ds">${p.sent_at ? 'sent' : 'created'}</div>
+      </div>
       <div class="cell row-actions" onclick="event.stopPropagation()">
         <button class="row-menu-btn" onclick="toggleMenu('${p.id}', event)" title="Actions">
           <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
@@ -727,6 +845,8 @@ function renderProposals(){
           <button onclick="openDrawer('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View details</button>
           <button onclick="editProposal('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Open editor</button>
           <button onclick="openAsClient('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14L21 3M19 14v7H3V5h7"/></svg>Preview as client</button>
+          <div class="div"></div>
+          ${p.client_phone ? `<button onclick="sendWhatsApp('${p.id}')" style="color:#42d77f"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>Send via WhatsApp</button>` : ''}
           <button onclick="copyShareLink('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy share link</button>
           ${ME.role === 'admin' || p.owner_id === ME.id
             ? `<div class="div"></div><button class="danger" onclick="deleteProposal('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Delete</button>`
@@ -773,7 +893,11 @@ async function openDrawer(id){
         <div class="k">Company</div><div class="v">${esc(p.client_company || '—')}</div>
         <div class="k">Contact</div><div class="v">${esc(p.client_name || '—')}</div>
         <div class="k">Email</div><div class="v">${esc(p.client_email || '—')}</div>
-        <div class="k">Phone</div><div class="v">${esc(p.client_phone || '—')}</div>
+        <div class="k">Phone</div><div class="v" style="display:flex;align-items:center;gap:8px">
+          <span style="font-family:'DM Mono',monospace">${esc(p.client_phone || '—')}</span>
+          ${p.client_phone ? `<button class="wa-btn" onclick="sendWhatsApp('${p.id}')" title="Send via WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></button>` : ''}
+        </div>
+        <div class="k">Category</div><div class="v">${p.category ? `<span class="type-badge ${categoryClass(p.category)}"><span class="tbd"></span><span class="tbl">${esc(p.category)}</span></span>` : '—'}</div>
         <div class="k">Industry</div><div class="v">${esc(p.industry || '—')}</div>
       </div>
     </div>
@@ -809,9 +933,11 @@ async function openDrawer(id){
     <button class="btn" onclick="openAsClient('${p.id}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14L21 3M19 14v7H3V5h7"/></svg> Preview
     </button>
-    <button class="btn" onclick="copyShareLink('${p.id}')">
+    ${p.client_phone ? `<button class="btn" onclick="sendWhatsApp('${p.id}')" style="color:#42d77f;border-color:rgba(37,211,102,.3)">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.3c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg> WhatsApp
+    </button>` : `<button class="btn" onclick="copyShareLink('${p.id}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/></svg> Share
-    </button>
+    </button>`}
     <button class="btn btn-primary" onclick="editProposal('${p.id}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Open editor
     </button>
