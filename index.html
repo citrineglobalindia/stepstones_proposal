@@ -8674,8 +8674,7 @@ function spShowAuthChrome(){
 function spProposalToRow(p, d){
   // d = gatherData() output
   const totals = computeTotals(d);
-  return {
-    id: p?.id,
+  const row = {
     owner_id: SP.profile?.id || p?.owner_id,
     title: d.title || (d.company ? `Proposal for ${d.company}` : ''),
     pno: d.pno || null,
@@ -8688,6 +8687,10 @@ function spProposalToRow(p, d){
     total: totals.grand || 0,
     payload: d,
   };
+  // Only include id when updating an existing proposal; otherwise let
+  // Postgres fill it via DEFAULT gen_random_uuid().
+  if (p?.id) row.id = p.id;
+  return row;
 }
 
 /* ============ NEW init ============ */
